@@ -1,0 +1,159 @@
+
+<nav>
+   <h6>               <a routerLink="/cc">arrays</a>
+   </h6>
+   <h6>               <a routerLink="/cc">cc</a>
+   </h6>
+</nav>
+<div class="row">
+   <div class="col-2 align-self-start">
+      <mat-radio-group [(ngModel)]="arrays.deviceRef" aria-label="Select an option">
+         <div class="row">
+            <div class="col-2 offset-md-1">
+
+               <mat-radio-button value="1" (change)="AddComponant('ac')" >Microinverters</mat-radio-button>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-2 offset-md-1">
+
+               <mat-radio-button value="2" (click)="AddComponant('ac')">AC Modules</mat-radio-button>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-2 offset-md-1">
+
+               <mat-radio-button value="3"(click)="AddComponant('sy')">System Optimizers or Module Level RSD's with String Inverter(s)</mat-radio-button>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-2 offset-md-1">
+
+               <mat-radio-button value="4"(click)="AddComponant('sy')">String Inverters</mat-radio-button>
+            </div>
+         </div>
+      </mat-radio-group>
+   </div>
+</div>
+<div class="row  ">
+   <div class="col-2 align-self-start">
+ 
+       <div class="col-2 offset-md-1  ">
+         <br>
+         <mat-form-field>
+            <label>Pv Model</label>
+
+            <mat-select [(ngModel)]="arrays.pvModel" (selectionChange)="initList(arrays.inverter.length ===0)">
+               <mat-option *ngFor="let inverter of inverters" [value]="inverter">
+                  {{inverter}}
+               </mat-option>
+            </mat-select>
+         </mat-form-field>
+      </div>
+
+   </div>
+</div>
+<div>
+   <ng-container *ngIf="arrays.deviceRef=='3'||arrays.deviceRef=='4'">
+   <ng-container *ngFor="let list of arrays.inverter ;let index=index">
+      <div class="row ">
+         <div class="col-2 align-self-start">
+            <div class="col-2 offset-md-1  ">
+               <mat-form-field>
+
+                  <label>Inverter{{index+1}} </label>
+                  <mat-select [(ngModel)]="arrays.inverter[index].name" (selectionChange)="
+ initList(arrays.inverter.length<5&&index==arrays.inverter.length-1,$event.value,index);
+ addString(
+   {
+      create:$event.value != ''&&arrays.inverter[index].stringFields.length==0,
+      index:index});
+ ">
+                     <mat-option value="-1">
+
+                     </mat-option>
+                     <mat-option *ngFor="let value of inverterModel" [value]="value">
+                        {{value}}
+                     </mat-option>
+                  </mat-select>
+               </mat-form-field>
+            </div>
+         </div>
+      </div>
+      <div class="row " style="margin-left: 2px;">
+
+         <div class="col  align-self-start">
+            <div class="col ">
+               <div class="row ">
+
+                  <ng-container *ngFor="let liststring of arrays.inverter[index].stringFields ;let string=index">
+                     <div class="col-2">
+
+
+                        <label>String{{string+1}}</label>
+                        <input type="number" (input)="searchTerm$.next(
+            {
+            create:(arrays.inverter[index].stringFields.length<12&& string==arrays.inverter[index].stringFields.length-1),
+                  index:index,
+                  value:$event.target.value,
+                  stringIndex:string}
+                  )" [value]="liststring.value">
+
+                     </div>
+                  </ng-container>
+               </div>
+            </div>
+         </div>
+      </div>
+   </ng-container>
+</ng-container>
+<ng-container *ngIf="arrays.deviceRef=='1'||arrays.deviceRef=='2'" >
+
+
+   <ng-container *ngFor="let numberModule of arrays.numberModule ;let index=index">
+      <div class="row ">
+         <div class="col-2 align-self-start">
+            <div class="col-2 offset-md-1  ">
+               <mat-form-field>
+
+                  <label>Number of Modules on AC Circuit #{{index+1}} </label>
+                  <mat-select [(ngModel)]="numberModule.list"  (selectionChange)="addModule(
+                     {
+                        create:(arrays.numberModule.length<12&& index==arrays.numberModule.length-1),
+                              index:index,
+                              value:$event.value
+                             }
+                  
+                    )" >
+                     <mat-option value="-1">
+
+                     </mat-option>
+                     <mat-option *ngFor="let number of modules" [value]="number">
+                        {{number}}
+                     </mat-option>
+                  </mat-select>
+               </mat-form-field>
+            </div>
+         </div>
+         <div class="col-2 align-self-start">
+            <div class="col-2 offset-md-1  ">
+               <mat-form-field>
+
+                  <label>Branch #{{index+1}} </label>
+                  <mat-select  [(ngModel)]="numberModule.branch" (selectionChange)="setBranchValueByIndex($event.value,index)" >
+                     <mat-option value="-1">
+
+                     </mat-option>
+                     <mat-option *ngFor="let branch of branch" [value]="branch">
+                        {{branch}}
+                     </mat-option>
+                  </mat-select>
+               </mat-form-field>
+            </div>
+         </div>
+      </div>
+    
+   </ng-container>
+</ng-container>
+</div>
+<button mat-stroked-button color="primary" (click)="save()">Submit</button>
